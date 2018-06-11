@@ -374,6 +374,7 @@ void onChangeJoystickTrim(float x, float y, float trim_x, controller_id_t contro
     if (control_x->reverse)
     {
       x = -x;
+      trim_x = -trim_x;
     }
     if (control_y->reverse)
     {
