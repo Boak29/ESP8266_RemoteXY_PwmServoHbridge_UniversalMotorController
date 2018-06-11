@@ -6,8 +6,10 @@ Using the Arduino IDE, RemoteXY app on Android or iPhone, you can control a comb
 - PWM (LED, DC motor, ...)
 - H-bridge
 
+All ESP8266 based boards are supported, including NodeMCU, Wemos D1, ESP-01 (4 pin's!), ...
+
 Supported H-bridges are
-- L293D
+- L293D (NodeMCU motor shield)
 - TB6612 (using 2 PWM channels, the 3rd pin is kept HIGH)
 - TB6612 I2C (Wemos D1 motor shield)
 - HG7881 (L9110)
