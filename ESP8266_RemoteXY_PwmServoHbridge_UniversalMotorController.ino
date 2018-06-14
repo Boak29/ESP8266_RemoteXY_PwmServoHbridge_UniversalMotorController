@@ -151,22 +151,23 @@ void init_motors()
         // TODO check if pins can work as PWM if necessary
         setup_pin_mode_output(motor->pin1);
         setup_pin_mode_output(motor->pin2);
-        break;
-
-      case HBRIDGETYPE_TB6612_I2C_A :
-        if (!tb6612_i2c_motor_a)
+        switch (motor->hbridgetype)
         {
-          tb6612_i2c_motor_a = new MM_Motor_TB6612_I2C(0x30, TB6612_MOTOR_A, 1000);
+          case HBRIDGETYPE_TB6612_I2C_A :
+            if (!tb6612_i2c_motor_a)
+            {
+              tb6612_i2c_motor_a = new MM_Motor_TB6612_I2C(0x30, TB6612_MOTOR_A, 1000);
+            }
+            break;
+
+          case HBRIDGETYPE_TB6612_I2C_B :
+            if (!tb6612_i2c_motor_b)
+            {
+              tb6612_i2c_motor_b = new MM_Motor_TB6612_I2C(0x30, TB6612_MOTOR_B, 1000);
+            }
+            break;
         }
         break;
-
-      case HBRIDGETYPE_TB6612_I2C_B :
-        if (!tb6612_i2c_motor_b)
-        {
-          tb6612_i2c_motor_b = new MM_Motor_TB6612_I2C(0x30, TB6612_MOTOR_B, 1000);
-        }
-        break;
-
     }
     motor_halt(count);
   }
