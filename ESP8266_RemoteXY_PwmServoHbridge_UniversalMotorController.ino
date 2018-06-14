@@ -388,8 +388,19 @@ void onChangeJoystickTrim(float x, float y, float trim_x, controller_id_t contro
     x += (float)control_x->translat;
     y += (float)control_y->translat;
 
-    x += trim_x;
+    switch (control_x->motorclass)
+    {
+      case MOTORCLASS_SERVO:
+        x += trim_x;
+        break;
 
+      case MOTORCLASS_HBRIDGE:
+      case MOTORCLASS_PWM:
+      case MOTORCLASS_PWM_HALF:
+        x += (trim_x * fabs(y / 100.0));
+        break;
+    }
+     
     if (motorsetup == MOTORSETUP_LEFTRIGHT)
     {
       float temp1 = y + x;
