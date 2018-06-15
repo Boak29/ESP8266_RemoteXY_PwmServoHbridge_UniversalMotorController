@@ -18,6 +18,8 @@
 #define REMOTEXY_MODE__ESP8266WIFI_LIB_POINT
 #include <ESP8266WiFi.h>
 
+// #define REMOTEXY__DEBUGLOGS Serial
+
 #include <RemoteXY.h>
 
 // RemoteXY configurate
@@ -58,8 +60,9 @@ struct {
 typedef enum {
   MOTORCLASS_SERVO = 0,
   MOTORCLASS_HBRIDGE,
-  MOTORCLASS_PWM, // PWM (slider)
+  MOTORCLASS_PWM,      // PWM (slider)
   MOTORCLASS_PWM_HALF, // PWM only half of the range (joystick)
+  MOTORCLASS_ONOFF,    // digital value
 } motorclass_t;
 
 
@@ -168,6 +171,12 @@ void init_motors()
             break;
         }
         break;
+
+      case MOTORCLASS_ONOFF:
+        setup_pin_mode_output(motor->pin1);
+        // TODO check if pin can work as PWM
+        break;
+
     }
     motor_halt(count);
   }
@@ -203,6 +212,9 @@ int16_t motor_getmaxvalue(control_config_t *motor)
 
     case MOTORCLASS_HBRIDGE:
       return hbridge_getmaxvalue(motor->hbridgetype);
+
+    case MOTORCLASS_ONOFF:
+      return 100;
   }
 }
 
@@ -221,6 +233,9 @@ long motor_getminvalue(control_config_t *motor)
 
     case MOTORCLASS_HBRIDGE:
       return -hbridge_getmaxvalue(motor->hbridgetype);
+
+    case MOTORCLASS_ONOFF:
+      return -100;
   }
 }
 
@@ -325,6 +340,10 @@ void motor_halt(int motorid)
           break;
       }
       break;
+
+    case MOTORCLASS_ONOFF:
+      digitalWrite(motor->pin1, LOW);
+      break;
   }
 }
 
@@ -355,6 +374,17 @@ void motor_setvalue(controller_id_t motorid, int motorvalue)
     case MOTORCLASS_HBRIDGE:
       motorvalue = constrain(motorvalue, -hbridge_getmaxvalue(motor->hbridgetype), hbridge_getmaxvalue(motor->hbridgetype));
       hbridge_setspeed(motor->hbridgetype, motor->pin1, motor->pin2, motorvalue);
+      break;
+
+    case MOTORCLASS_ONOFF:
+      if (motorvalue > 30)
+      {
+        digitalWrite(motor->pin1, HIGH);
+      }
+      if (motorvalue < -30)
+      {
+        digitalWrite(motor->pin1, LOW);
+      }
       break;
   }
 }
@@ -399,8 +429,12 @@ void onChangeJoystickTrim(float x, float y, float trim_x, controller_id_t contro
       case MOTORCLASS_PWM_HALF:
         x += (trim_x * fabs(y / 100.0));
         break;
+
+      case MOTORCLASS_ONOFF:
+        // ignore trim_x
+        break;
     }
-     
+
     if (motorsetup == MOTORSETUP_LEFTRIGHT)
     {
       float temp1 = y + x;
@@ -571,4 +605,3 @@ void loop()
   memcpy(&RemoteXYprev, &RemoteXY, sizeof(RemoteXY));
   delay(5); // in fact not necessary, just for lower power consumption
 }
-
