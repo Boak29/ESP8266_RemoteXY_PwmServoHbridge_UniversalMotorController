@@ -10,9 +10,9 @@ All ESP8266 based boards are supported, including NodeMCU, Wemos D1, ESP-01 (4 p
 
 Supported H-bridges are
 - L293D (NodeMCU motor shield)
-- TB6612 (using 2 PWM channels, the 3rd pin is kept HIGH)
+- TB6612 (using 2 PWM channels, the 3rd pin is kept HIGH) (= DRV8833)
 - TB6612 I2C (Wemos D1 motor shield)
-- HG7881 (L9110)
+- HG7881 (= L9110)
 
 The user interface is fixed and contains 
 - a joystick and horizontal slider to trim the motor/servo
