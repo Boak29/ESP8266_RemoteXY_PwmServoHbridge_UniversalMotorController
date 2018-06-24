@@ -377,11 +377,11 @@ void motor_setvalue(controller_id_t motorid, int motorvalue)
       break;
 
     case MOTORCLASS_ONOFF:
-      if (motorvalue > 30)
+      if (motorvalue > 70)
       {
         digitalWrite(motor->pin1, HIGH);
       }
-      if (motorvalue < -30)
+      if (motorvalue < -70)
       {
         digitalWrite(motor->pin1, LOW);
       }
